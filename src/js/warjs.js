@@ -143,9 +143,13 @@ var warjs = function () {
         for (objMenu in elements_menu) {
             var point = 0;
             var menuLimit = parseInt(compileSintax(elements_menu[objMenu].limit));
-            point = $(elements_menu[objMenu].target).offset().top;
-            if ((scrollPosY ) >= point - menuLimit) {
-                activeMenu = elements_menu[objMenu];
+            if($(elements_menu[objMenu].target).offset()){
+                point = $(elements_menu[objMenu].target).offset().top;
+                if ((scrollPosY ) >= point - menuLimit) {
+                    activeMenu = elements_menu[objMenu];
+                }
+            } else {
+                console.log('falha no id: ',elements_menu[objMenu].target )
             }
         }
 
@@ -167,7 +171,6 @@ var warjs = function () {
 
 
         for (obj in elements) {
-
             var objeto = elements[obj].obj;
             var target = elements[obj].target;
             var porcIni = elements[obj].porc[0];
@@ -199,6 +202,7 @@ var warjs = function () {
                     tipo = '%';
                 }
             }
+            
 
             var objLimitTop = 0;
             if (topLimit != '') {
