@@ -1,5 +1,5 @@
 # WarJs
-Javascript Framework - em desenvolvimento.
+Javascript Framework - Em desenvolvimento.
 
 
 
@@ -10,7 +10,7 @@ bower install warjs
 
 Adicione o arquivo warjs em seu projeto
 <pre>
-&lt;script src="js/warjs.min..js"&gt;&lt;/script&gt;
+&lt;script src="js/warjs.min.js"&gt;&lt;/script&gt;
 </pre>
  
 

@@ -16,53 +16,12 @@ var warjs = function () {
     var $parentWidthIn = 0;
     var $parentHeightIn = 0;
 
-    function warjs() {
-        $(window).scroll(scrollMove);
-        $(window).resize(screenResize);
-        scrollMove();
-        screenResize();
-        render();
+
+    function moveTo(idpage, limitMove) {
+        $('html, body').animate({scrollTop: $(idpage).offset().top - limitMove}, 1000);
     }
 
-    warjs();
 
-    function scrollMove() {
-        scrollPosY = $(document).scrollTop();
-        render();
-    }
-
-    function screenResize() {
-        $screenHeight = screenHeight = $(window).height();
-        $screenWidth = screenWidth = $(window).width();
-
-        for (obj in elements_size) {
-            var objeto = elements_size[obj].obj;
-            if (elements_size[obj].height) {
-
-                var objH = parseInt(compileSintax(elements_size[obj].height));
-                if(!objH){
-                    if($(elements_size[obj].height).length){
-                        objH = $(elements_size[obj].height).outerHeight(true);
-                    }
-                }
-
-                var hend = objH;
-                if (elements_size[obj].limitH && (elements_size[obj].limitH > objH)) {
-                    hend = elements_size[obj].limitH;
-                }
-                objeto.height(hend);
-            }
-            if (elements_size[obj].width) {
-                var objW = parseInt(compileSintax(elements_size[obj].width));
-                var wend = objW;
-                if (elements_size[obj].limitW && (elements_size[obj].limitW > objW)) {
-                    wend = elements_size[obj].limitH;
-                }
-                objeto.width(hend);
-            }
-        }
-        render();
-    }
 
 
     function addShotClass(object, className, delay) {
@@ -75,17 +34,14 @@ var warjs = function () {
     function removeShotClass(object, className, delay) {
         window.setTimeout(function () {
             object.obj.removeClass(className);
-
         }, delay);
     }
 
     function shotCallFunction(object, className, delay) {
         window.setTimeout(function () {
-
-            if (typeof window[className] == "function") {
+            if (typeof window[className] === "function") {
                 window[className](object);
             }
-
         }, delay);
     }
 
@@ -93,24 +49,21 @@ var warjs = function () {
 
     function render() {
 
-        var porctotal = (scrollPosY * 100) / ($(document).height() - $(window).height());
-
-        for (objShot in elements_shot) {
-            var point = 0;
+        var point;
+        for (var objShot in elements_shot) {
+            point = 0;
             var shotDelay = parseInt(compileSintax(elements_shot[objShot].delay));
             var shotLimit = parseInt(compileSintax(elements_shot[objShot].limit));
             var objTemp = elements_shot[objShot];
             var objClass = objTemp.name;
 
-            if (objTemp.point == 'self') {
+            if (objTemp.point === 'self') {
                 point = elements_shot[objShot].obj.offset().top;
             } else {
                 point = parseInt(compileSintax(objTemp.point));
             }
 
-
-            if (objTemp.type == 'pin') {
-
+            if (objTemp.type === 'pin') {
                 if (scrollPosY >= point + shotLimit) {
                     if (!objTemp.obj.hasClass(objClass)) {
                         objTemp.obj.addClass(objClass)
@@ -120,41 +73,36 @@ var warjs = function () {
                         objTemp.obj.removeClass(objClass)
                     }
                 }
-
             } else {
                 if ((scrollPosY + $screenHeight) >= point + shotLimit) {
-
-                    if (objTemp.type == 'addClass') {
+                    if (objTemp.type === 'addClass') {
                         addShotClass(objTemp, objClass, shotDelay);
-                    } else if (objTemp.type == 'removeClass') {
+                    } else if (objTemp.type === 'removeClass') {
                         removeShotClass(objTemp, objClass, shotDelay);
                     } else {
                         shotCallFunction(objTemp, objClass, shotDelay);
                     }
-
                     delete elements_shot[objShot];
                 }
             }
-
-
         }
 
         activeMenu = null;
-        for (objMenu in elements_menu) {
-            var point = 0;
+        for (var objMenu in elements_menu) {
+            point = 0;
             var menuLimit = parseInt(compileSintax(elements_menu[objMenu].limit));
-            if($(elements_menu[objMenu].target).offset()){
+            if ($(elements_menu[objMenu].target).offset()) {
                 point = $(elements_menu[objMenu].target).offset().top;
                 if ((scrollPosY ) >= point - menuLimit) {
                     activeMenu = elements_menu[objMenu];
                 }
             } else {
-                console.log('falha no id: ',elements_menu[objMenu].target )
+                console.log('Falha no id: ', elements_menu[objMenu].target)
             }
         }
 
         if (activeMenu) {
-            if (activeMenu != activeMenuOld) {
+            if (activeMenu !== activeMenuOld) {
                 if (activeMenuOld) {
                     activeMenuOld.obj.removeClass(activeMenuOld.class);
                 }
@@ -170,7 +118,7 @@ var warjs = function () {
         }
 
 
-        for (obj in elements) {
+        for (var obj in elements) {
             var objeto = elements[obj].obj;
             var target = elements[obj].target;
             var porcIni = elements[obj].porc[0];
@@ -185,117 +133,182 @@ var warjs = function () {
             var bottomLimit = elements[obj].bottomlimit;
             var debug = elements[obj].debug;
             var idObjeto = elements[obj].idobj;
+            var parent;
+            var valorfinal;
 
             if (elements[obj].parent) {
-                var parent = $(elements[obj].parent);
+                parent = $(elements[obj].parent);
                 $parentWidth = parent.width();
                 $parentWidthIn = parent.innerWidth();
                 $parentHeight = parent.height();
                 $parentHeightIn = parent.innerHeight();
-            };
+            }
 
-
-            if (tipo == '') {
+            if (tipo === '') {
                 if (varElementInit.indexOf("px") > 0) {
                     tipo = 'px';
                 } else if (varElementInit.indexOf("%") > 0) {
                     tipo = '%';
                 }
             }
-            
+
 
             var objLimitTop = 0;
-            if (topLimit != '') {
+            if (topLimit !== '') {
                 if (!isNaN(topLimit)) {
                     objLimitTop = topLimit;
                 } else {
-                    if (topLimit == 'true') {
+                    if (topLimit === 'true') {
                         objLimitTop = screenHeight;
                     }
                 }
             }
-            ;
+
 
             var objLimitBottom = 0;
-            if (bottomLimit != '') {
+            if (bottomLimit !== '') {
                 if (!isNaN(bottomLimit)) {
                     objLimitBottom = bottomLimit;
                 } else {
-                    if (bottomLimit == 'true') {
+                    if (bottomLimit === 'true') {
                         objLimitBottom = screenHeight;
                     }
                 }
             }
-            ;
-
 
             var objHeight, objXinit, objXend, difInit, difEnd, porc;
-
             if (elements[obj].parent) {
                 if (parent.offset()) {
                     objHeight = parent.outerHeight();
                     objXinit = parent.offset().top - objLimitTop;// screenHeight;
-
                     difInit = scrollPosY - objXinit;
                 } else {
                     console.log('Não foi possível detectar o parent ' + elements[obj].parent);
                 }
-
-
             } else {
                 objHeight = objeto.outerHeight();
                 objXinit = objeto.offset().top - objLimitTop;
                 difInit = scrollPosY - objXinit;
-
             }
             difEnd = objHeight + Number(objLimitTop) - Number(objLimitBottom);
             porc = (difInit * 100) / difEnd;
-
             if (porc <= porcIni) {
                 valorfinal = variantIni;
             }
             if (porc >= 0 && porc <= 100) {
-
                 if ((porc >= porcIni) && (porc <= porcEnd)) {
                     var newporc = porc - porcIni;
-                    var valorfinal = variantIni + (((variantEnd - variantIni) * newporc) / (porcEnd - porcIni));
+                    valorfinal = variantIni + (((variantEnd - variantIni) * newporc) / (porcEnd - porcIni));
                 }
-
-
             }
             if (porc >= porcEnd) {
                 valorfinal = variantEnd;
             }
-
-
             var itens = target.split(",");
             var sintaxCss = {};
             for (var x = 0; x < itens.length; x++) {
-
-
-                if (objeto.css(itens[x]) != (valorfinal) + tipo) {
+                if (objeto.css(itens[x]) !== (valorfinal) + tipo) {
                     sintaxCss[itens[x]] = prefix + (valorfinal) + tipo;
                     objeto.css(itens[x], prefix + (valorfinal) + tipo);
                 }
             }
-
             if (debug) {
                 $('#debugtop_obj' + idObjeto).css('top', objXinit + 'px');
                 $('#debugbottom_obj' + idObjeto).css('top', (objXinit + difEnd) + 'px');
-
             }
-
-
         }
     }
 
 
-    this.mount = function () {
+    function screenResize() {
+        $screenHeight = screenHeight = $(window).height();
+        $screenWidth = screenWidth = $(window).width();
+        var hEnd;
+        for (var obj in elements_size) {
+            var objeto = elements_size[obj].obj;
+            if (elements_size[obj].height) {
+                var objH = parseInt(compileSintax(elements_size[obj].height));
+                if (!objH) {
+                    if ($(elements_size[obj].height).length) {
+                        objH = $(elements_size[obj].height).outerHeight(true);
+                    }
+                }
+                hEnd = objH;
+                if (elements_size[obj].limitH && (elements_size[obj].limitH > objH)) {
+                    hEnd = elements_size[obj].limitH;
+                }
+                objeto.height(hEnd);
+            }
+            if (elements_size[obj].width) {
+                var objW = parseInt(compileSintax(elements_size[obj].width));
+                var wend = objW;
+                if (elements_size[obj].limitW && (elements_size[obj].limitW > objW)) {
+                    wend = elements_size[obj].limitH;
+                }
+                objeto.width(hEnd);
+            }
+        }
+        render();
+    }
+    function scrollMove() {
+        scrollPosY = $(document).scrollTop();
+        render();
+    }
+    function addElementInArray(obj, target, porc, variant, parent, toplimit, bottomlimit, typevar, prefix, debug) {
+        var objeto = {
+            'obj': obj,
+            'idobj': objid,
+            'target': target,
+            'porc': porc,
+            'vars': variant,
+            'parent': parent,
+            'toplimit': toplimit,
+            'bottomlimit': bottomlimit,
+            'typevar': typevar,
+            'prefix': prefix,
+            'debug': debug
+        };
+        obj.attr('data-war-name', 'obj' + objid);
+        elements['obj' + objid] = objeto;
+        objid++;
+    }
 
+    var Jscorrect = function (str) {
+        return str
+            .replace(/([\$\w]+)\s*:/g, function (_, $1) {
+                return '"' + $1 + '":'
+            })
+            .replace(/'([^']+)'/g, function (_, $1) {
+                return '"' + $1 + '"'
+            })
+    }
+
+    function calc(fn) {
+        return new Function('return ' + fn)();
+    }
+
+
+    function compileSintax(str) {
+
+        str = str.replace('$screenHeight', $screenHeight)
+            .replace('$screenWidth', $screenWidth)
+            .replace('$parentWidth', $parentWidth)
+            .replace('$parentHeight', $parentHeight)
+            .replace('$parentWidthIn', $parentWidthIn)
+            .replace('$parentHeightIn', $parentHeightIn);
+        try {
+            return calc(str);
+        } catch (e) {
+            return str;
+        }
+    }
+
+    function mount() {
 
         $('[data-war-shot]').each(function () {
             var element = $(this);
-            var dados = JSON.parse(Jsoncorrect(element.data('war-shot')));
+            var attr = element.data('war-shot');
+            var dados = JSON.parse(Jscorrect(attr));
             var limit = 0;
             var delay = 0;
             var type = 'addClass';
@@ -311,8 +324,8 @@ var warjs = function () {
             }
 
             var objeto = {};
-            if(typeof type == 'object'){
-                for(var item in type){
+            if (typeof type === 'object') {
+                for (var item in type) {
                     objeto = {
                         'obj': element,
                         'name': type[item],
@@ -340,11 +353,9 @@ var warjs = function () {
 
             screenResize();
         });
-
-
         $('[data-war-menu]').each(function () {
             var element = $(this);
-            var dados = JSON.parse(Jsoncorrect(element.data('war-menu')));
+            var dados = JSON.parse(Jscorrect(element.data('war-menu')));
             var limit = 0;
             var limitMove = 0;
             var classname = 'active';
@@ -377,11 +388,9 @@ var warjs = function () {
 
 
         });
-
-
         $('[data-war-size]').each(function () {
             var element = $(this);
-            var dados = JSON.parse(Jsoncorrect(element.data('war-size')));
+            var dados = JSON.parse(Jscorrect(element.data('war-size')));
             var objeto = {
                 'obj': element,
                 'height': dados.height,
@@ -393,12 +402,10 @@ var warjs = function () {
             objid++;
             screenResize();
         });
-
-
         $('[data-war]').each(function () {
 
             var element = $(this);
-            var dados = JSON.parse(Jsoncorrect(element.data('war')));
+            var dados = JSON.parse(Jscorrect(element.data('war')));
             var parent = dados.parent;
             var toplimit = false;
             var bottomlimit = false;
@@ -406,19 +413,15 @@ var warjs = function () {
             var prefix = '';
             var debug = false;
 
-
             if (dados.toplimit) {
                 toplimit = dados.toplimit;
             }
             if (dados.bottomlimit) {
                 bottomlimit = dados.bottomlimit;
             }
-
             if (dados.debug) {
                 debug = dados.debug;
             }
-
-
             if ($.isArray(dados.animate[0])) {
                 for (var i = 0; i < dados.animate.length; i++) {
                     if (dados.animate[i][3]) {
@@ -438,69 +441,31 @@ var warjs = function () {
                 }
                 addElementInArray(element, dados.animate[0], dados.animate[1], dados.animate[2], parent, toplimit, bottomlimit, typvar, prefix, debug);
             }
-
             if (debug) {
                 var objDataName = element.data('war-name');
                 $('body').prepend('<div id="debugtop_' + objDataName + '" style="z-index:999; font-family:Arial;font-size: 12px; position: absolute; top: 10px; right: 10px;color: red;border-bottom: 1px solid red;    margin-top: -14px;">Limit Top - ' + objDataName + '</div>')
-                //  $('body').prepend('<div id="debugtrigger_' + element.data('war-name') +'" style="z-index:999; font-family:Arial;font-size: 12px; position: absolute; top: 20px; right: 10px;color: blue;border-bottom: 1px solid blue;">Trigger</div>')
                 $('body').prepend('<div id="debugbottom_' + objDataName + '" style="z-index:999; font-family:Arial;font-size: 12px; position: absolute; top: 30px; right: 10px;color: green;border-bottom: 1px solid green;    margin-top: -14px;">Limit Bottom - ' + objDataName + '</div>')
             }
-
         });
         render();
-    };
-
-    function addElementInArray(obj, target, porc, variant, parent, toplimit, bottomlimit, typevar, prefix, debug) {
-        var objeto = {
-            'obj': obj,
-            'idobj': objid,
-            'target': target,
-            'porc': porc,
-            'vars': variant,
-            'parent': parent,
-            'toplimit': toplimit,
-            'bottomlimit': bottomlimit,
-            'typevar': typevar,
-            'prefix': prefix,
-            'debug': debug
-        };
-
-
-        obj.attr('data-war-name', 'obj' + objid);
-        elements['obj' + objid] = objeto;
-        objid++;
     }
 
-
-    function Jsoncorrect(str) {
-        return str
-            .replace(/([\$\w]+)\s*:/g, function (_, $1) {
-                return '"' + $1 + '":'
-            })
-            .replace(/'([^']+)'/g, function (_, $1) {
-                return '"' + $1 + '"'
-            })
-    }
-
-    function compileSintax(sintax) {
-        try {
-            return eval(sintax);
-        } catch (e) {
-            return sintax;
-        }
-    }
-
-    function moveTo(idpage, limitMove) {
-
-        $('html, body').animate({scrollTop: $(idpage).offset().top - limitMove}, 1000);
+    this.mount = function () {
+        mount();
     }
 
     this.moveTo = function (idpage, limitMove) {
         moveTo(idpage, limitMove);
     }
 
-    this.resize = function(){
+    this.resize = function () {
         screenResize();
     }
 
-}
+    $(window).scroll(scrollMove);
+    $(window).resize(screenResize);
+    scrollMove();
+    screenResize();
+    render();
+
+};
